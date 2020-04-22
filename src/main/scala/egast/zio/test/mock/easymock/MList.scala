@@ -29,34 +29,62 @@ trait Mock[A] {
 trait Expectation[A]
 
 trait MHead[H, L <: MList] {
-  type Head = H
-  type Tail <: MList
+  type Head
+//  type Tail <: MList
 
-  def head(l: L): H
+  def head(l: L): Head
 
-  def tail(l: L): Tail
+//  def tail(l: L): Tail
 }
 
 
 object MHead {
 
+
   implicit def deriveHead[H, T <: MList]: MHead[H, H :: T] = new MHead[H, H :: T] {
-    override type Tail = T
+    override type Head = H
 
     override def head(l: H :: T): H = l.head
-
-    override def tail(l: H :: T): T = l.tail
   }
+
+//  implicit def recurse[H, T <: MList, U]
+//  (implicit st: MHead[U, T]): MHead[U, H :: T] =
+//  new MHead[U, H :: T] {
+//    override type Head = st.Head
+//
+//    override def head(l: H :: T): Head = st.head(l.tail)
+//  }
 }
 
-case class MockHelper[H, MT <: MList, E <: MList](mocks: H :: MT, expectations: E) {
+trait MTail[T <: MList, L <:MList]{
+  type Tail <: MList
+  def tail(l:L): Tail
+}
+
+object MTail{
+
+  implicit def deriveTail[T, L <: MList]: MTail[T, T :: L] = new MTail[T, T :: L] {
+    override type Tail = L
+
+    override def tail(l: T :: L): Tail = l.tail
+  }
+
+//  implicit def recurse[H, T <: MList, U]
+//  (implicit st: MTail[U, T]): MTail[U, H :: T] =
+//    new MTail[U, H :: T] {
+//      override type Tail = st.Tail
+//
+//      override def tail(l: H :: T): st.Tail = st.tail(l.tail)
+//    }
+}
+
+case class MockHelper[MT <: MList, E <: MList](mocks: MT, expectations: E) {
   //  def expect(f: H => H): MockHelper[M, E] =
 
-  def next[TH](implicit tHead: MHead[TH, MT]): MockHelper[tHead.Head, tHead.Tail, H :: E] =
-    MockHelper[tHead.Head, tHead.Tail, H :: E](
-      mocks = MCons(tHead.head(mocks.tail),
-        tHead.tail(mocks.tail)),
-      expectations = MCons(mocks.head, expectations)
+  def next[T <: MList, TH](implicit tHead: MHead[TH, MT], tTail: MTail[T, MT]): MockHelper[tTail.Tail, ::[tHead.Head, E]] =
+    MockHelper(
+      mocks = tTail.tail(mocks),
+      expectations = MCons(tHead.head(mocks), expectations)
     )
 
   //    MockHelper(current = head.head(mocks))
@@ -71,9 +99,9 @@ object MockListTestApp extends App {
   val head = mlist.head
   val tail = mlist.tail
 
-  val mockHelper: MockHelper[String, Int :: MNil, MNil.type] = MockHelper(mlist, MNil)
+  val mockHelper: MockHelper[String :: Int :: MNil, MNil.type] = MockHelper(mlist, MNil)
   val n1 = mockHelper.next
 //  val n2 = n1.next
-//  val n3 = n2.next
-//  val n4 = mockHelper.next
+  //  val n3 = n2.next
+  //  val n4 = mockHelper.next
 }
