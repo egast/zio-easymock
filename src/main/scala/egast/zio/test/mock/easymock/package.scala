@@ -36,7 +36,7 @@ package object easymock {
 
   import org.easymock.EasyMock.expect
 
-  def expectM[A](A: A): Task[IExpectationSetters[A]] =
+  def expectM[A](A: => A): Task[IExpectationSetters[A]] =
     Task(expect(A))
 
 }
