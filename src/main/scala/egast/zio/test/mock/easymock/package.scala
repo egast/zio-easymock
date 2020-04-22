@@ -23,15 +23,15 @@ package object easymock {
   def createStrictMock[A: ClassTag : Tagged, B: ClassTag : Tagged, C: ClassTag : Tagged]: Mocks3[A, B, C] =
     Mocks3(Mocking.mockStrictZio[A], Mocking.mockStrictZio[B], Mocking.mockStrictZio[C])
 
-  def expecting[A: ClassTag : Tagged](expectation: A => Task[IExpectationSetters[_]]): ExpectingMocks1[A] =
+  def expecting[A: ClassTag : Tagged](expectation: A => Task[Any]): ExpectingMocks1[A] =
     createMock[A].expecting(expectation)
 
   def expecting[A: ClassTag : Tagged, B: ClassTag : Tagged]
-  (expectation: (A, B) => Task[IExpectationSetters[_]]
+  (expectation: (A, B) => Task[Any]
   ): ExpectingMocks2[A, B] = createMock[A, B].expecting(expectation)
 
   def expecting[A: ClassTag : Tagged, B: ClassTag : Tagged, C: ClassTag : Tagged]
-  (expectation: (A, B, C) => Task[IExpectationSetters[_]]
+  (expectation: (A, B, C) => Task[Any]
   ): ExpectingMocks3[A, B, C] = createMock[A, B, C].expecting(expectation)
 
   import org.easymock.EasyMock.expect
