@@ -81,7 +81,7 @@ private[easymock] object Mocking {
 
   private def testMocks[M <: Product : ClassTag, R, E](expectation: M => Task[Any], assertion: M => ZIO[R, E, TestResult])(allMocks: M): ZIO[R, E, TestResult] =
     (for {
-      _ <- expectation(allMocks)
+      _ <- Task(expectation(allMocks)).flatten
       allMocksList = allMocks.productIterator.toList
       replayResult <- ZIO.foreach(allMocksList)(testReplay).map(_.reduce(_ && _))
       testResult <- assertion(allMocks)

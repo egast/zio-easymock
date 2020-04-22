@@ -162,6 +162,26 @@ object easymockSpec extends DefaultRunnableSpec {
             .provideCustomLayer(mockLayer ++ mock2Layer)
         )
       )
+    },
+    testM("test mocking") {
+      checkM(Gen.listOf(Gen.anyInt)) { numbers =>
+        expecting[TestService.Service] { service1 =>
+          ZIO.collectAll(
+            numbers.map { n =>
+              expectM(service1.doSomething(n)).map(_.andReturn(ZIO.effectTotal(n.toString)))
+            }
+          )
+        }.whenExecutingAsLayer(mockLayer =>
+          assertM(
+            ZIO.collectAll(
+              numbers.map {
+                n => TestService.doSomething(n)
+              }
+            )
+          )(equalTo(numbers.map(_.toString)))
+            .provideCustomLayer(mockLayer)
+        )
+      }
     }
   )
 
