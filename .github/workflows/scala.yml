@@ -2,7 +2,7 @@ name: Scala CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, test-workflow ]
   pull_request:
     branches: [ master ]
 
@@ -19,3 +19,5 @@ jobs:
         java-version: 1.8
     - name: Run tests
       run: sbt test
+    - name: Publish
+      run: sbt publish
