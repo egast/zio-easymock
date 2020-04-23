@@ -1,3 +1,4 @@
+![Zio-EasyMock CI](https://github.com/egast/zio-easymock/workflows/Zio-EasyMock%20CI/badge.svg)
 # zio-easymock
 EasyMock mocking for ZIO
 
