@@ -1,6 +1,6 @@
-package egast.zio.test.mock.easymock
+package egast.zioeasymock
 
-import egast.zio.test.mock.easymock.Mocking._
+import egast.zioeasymock.Mocking._
 import org.easymock.EasyMock
 import zio._
 import zio.test._
@@ -12,21 +12,21 @@ case class Mocks1[A: Tagged](mock1: Task[A]) {
   def expecting(expectation: A => Task[Any]): ExpectingMocks1[A] =
     ExpectingMocks1(this, expectation)
 
-  private[easymock] val asTuple: Task[Tuple1[A]] = mock1.map(Tuple1(_))
+  private[zioeasymock] val asTuple: Task[Tuple1[A]] = mock1.map(Tuple1(_))
 }
 
 case class Mocks2[A: Tagged, B: Tagged](mock1: Task[A], mock2: Task[B]) {
   def expecting(expectation: (A, B) => Task[Any]): ExpectingMocks2[A, B] =
     ExpectingMocks2(this, expectation)
 
-  private[easymock] val asTuple: Task[(A, B)] = mock1.zip(mock2)
+  private[zioeasymock] val asTuple: Task[(A, B)] = mock1.zip(mock2)
 }
 
 case class Mocks3[A: Tagged, B: Tagged, C: Tagged](mock1: Task[A], mock2: Task[B], mock3: Task[C]) {
   def expecting(expectation: (A, B, C) => Task[Any]): ExpectingMocks3[A, B, C] =
     ExpectingMocks3(this, expectation)
 
-  private[easymock] val asTuple: Task[(A, B, C)] = for {
+  private[zioeasymock] val asTuple: Task[(A, B, C)] = for {
     m1 <- mock1
     m2 <- mock2
     m3 <- mock3
@@ -57,7 +57,7 @@ case class ExpectingMocks3[A: Tagged, B: Tagged, C: Tagged](mocks: Mocks3[A, B, 
     whenExecuting { case (a, b, c) => assertion(ZLayer.succeedMany(Has.allOf[A, B, C](a, b, c))) }
 }
 
-private[easymock] object Mocking {
+private[zioeasymock] object Mocking {
 
   def mockZio[A](implicit cls: ClassTag[A]): Task[A] =
     ZIO.effect(EasyMock.mock[A](cls.runtimeClass))

@@ -1,4 +1,4 @@
-package egast.zio.test.mock.easymock
+package egast.zioeasymock
 
 import org.easymock.EasyMock
 import zio.test.Assertion._
@@ -6,36 +6,8 @@ import zio.test.TestAspect._
 import zio.test._
 import zio.{Has, Task, ZIO}
 
-
-private object TestService {
-  type TestService = Has[Service]
-
-  trait Service {
-    def doSomething(key: Int): ZIO[Any, Throwable, String]
-  }
-
-  //TODO: Inorder to catch EasyMock call errors we have to wrap methodcall in Task
-  // i.e. ZIO.accessM(e=>Task(e.get[Service].doSomething(key)).flatten))
-  def doSomething(key: Int): ZIO[TestService, Throwable, String] =
-    ZIO.accessM(_.get[Service].doSomething(key))
-}
-
-
-private object TestService2 {
-  type TestService2 = Has[Service]
-
-  trait Service {
-    def doSomething2(key: Int): ZIO[Any, Throwable, String]
-  }
-
-  //TODO: Inorder to catch EasyMock call errors we have to wrap methodcall in Task
-  // i.e. ZIO.accessM(e=>Task(e.get[Service].doSomething(key)).flatten))
-  def doSomething2(key: Int): ZIO[TestService2, Throwable, String] =
-    ZIO.accessM(_.get[Service].doSomething2(key))
-}
-
-object easymockSpec extends DefaultRunnableSpec {
-  override def spec = suite("easymock")(
+object zioeasymockSpec extends DefaultRunnableSpec {
+  override def spec = suite("zioeasymock")(
     testM("test mocking") {
       expecting[TestService.Service, TestService2.Service] { (service1, service2) =>
         expectM(service1.doSomething(1000)).map(_.andReturn(ZIO.effectTotal("100"))) *>
@@ -166,18 +138,11 @@ object easymockSpec extends DefaultRunnableSpec {
     testM("test mocking") {
       checkM(Gen.listOf(Gen.anyInt)) { numbers =>
         expecting[TestService.Service] { service1 =>
-          ZIO.collectAll(
-            numbers.map { n =>
-              expectM(service1.doSomething(n)).map(_.andReturn(ZIO.effectTotal(n.toString)))
-            }
-          )
+          ZIO.foreach(numbers)(n =>
+            expectM(service1.doSomething(n)).map(_.andReturn(ZIO.effectTotal(n.toString))))
         }.whenExecutingAsLayer(mockLayer =>
           assertM(
-            ZIO.collectAll(
-              numbers.map {
-                n => TestService.doSomething(n)
-              }
-            )
+            ZIO.foreach(numbers)(n => TestService.doSomething(n))
           )(equalTo(numbers.map(_.toString)))
             .provideCustomLayer(mockLayer)
         )
@@ -185,4 +150,28 @@ object easymockSpec extends DefaultRunnableSpec {
     }
   )
 
+}
+
+
+private object TestService {
+  type TestService = Has[Service]
+
+  trait Service {
+    def doSomething(key: Int): ZIO[Any, Throwable, String]
+  }
+
+  def doSomething(key: Int): ZIO[TestService, Throwable, String] =
+    ZIO.accessM(_.get[Service].doSomething(key))
+}
+
+
+private object TestService2 {
+  type TestService2 = Has[Service]
+
+  trait Service {
+    def doSomething2(key: Int): ZIO[Any, Throwable, String]
+  }
+
+  def doSomething2(key: Int): ZIO[TestService2, Throwable, String] =
+    ZIO.accessM(_.get[Service].doSomething2(key))
 }

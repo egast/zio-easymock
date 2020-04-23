@@ -1,11 +1,11 @@
-package egast.zio.test.mock
+package egast
 
 import org.easymock.IExpectationSetters
 import zio.{Tagged, Task}
 
 import scala.reflect.ClassTag
 
-package object easymock {
+package object zioeasymock {
 
   def createMock[A: ClassTag : Tagged]: Mocks1[A] = Mocks1(Mocking.mockZio[A])
 
