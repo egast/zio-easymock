@@ -9,6 +9,7 @@ inThisBuild(
     scalaVersion := mainScala,
     crossScalaVersions := allScala,
     organization := "com.github.egast",
+    homepage := Some(url("https://github.com/egast/zio-easymock")),
     licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     developers := List(
       Developer("egast", "Erik Gast", "egast@users.noreply.github.com", url("https://github.com/egast"))
