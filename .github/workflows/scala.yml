@@ -1,4 +1,4 @@
-name: Scala CI
+name: Zio-EasyMock CI
 
 on:
   push:
