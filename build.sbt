@@ -1,6 +1,13 @@
+lazy val scala211 = "2.11.12"
+lazy val scala212 = "2.12.11"
+lazy val scala213 = "2.13.2"
+lazy val mainScala = scala213
+lazy val allScala = Seq(scala211, scala212, mainScala)
+
 inThisBuild(
   List(
-    scalaVersion := "2.13.1",
+    scalaVersion := mainScala,
+    crossScalaVersions := allScala,
     organization := "com.github.egast",
     licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     developers := List(
