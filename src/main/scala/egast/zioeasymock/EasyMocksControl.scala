@@ -23,17 +23,17 @@ object EasyMocksControl {
   def verify: RIO[EasyMocksControl, Unit] =
     ZIO.accessM(_.get[Service].verify)
 
-  lazy val live: ZLayer[Any, Throwable, Has[Service]] = ZLayer.fromEffect(
-    for {
-      c <- Task(EasyMock.createControl())
-      control <- Ref.make(c)
-    } yield new Service(control)
+  lazy val standard: ZLayer[Any, Throwable, Has[Service]] = ZLayer.fromEffect(
+    make(EasyMock.createControl())
   )
 
   lazy val strict: ZLayer[Any, Throwable, Has[Service]] = ZLayer.fromEffect(
+    make(EasyMock.createStrictControl())
+  )
+
+  private def make(mocksControl: => IMocksControl) =
     for {
-      c <- Task(EasyMock.createStrictControl())
+      c <- Task.effect(mocksControl)
       control <- Ref.make(c)
     } yield new Service(control)
-  )
 }

@@ -4,25 +4,19 @@ import egast.zioeasymock.Mock._
 import org.easymock.{EasyMock, IExpectationSetters}
 import zio.{Tagged, Task}
 
-import scala.reflect.ClassTag
+import scala.reflect._
 
 package object zioeasymock {
 
-  def createMock[A <: AnyRef : ClassTag : Tagged]: Mock1[A] = zioeasymock.Mock1(mockZio[A])
+  private def  getClass[A](implicit clst: ClassTag[A]): Class[A] =
+    clst.runtimeClass.asInstanceOf[Class[A]]
 
-  def createMock[A <: AnyRef : ClassTag : Tagged, B <: AnyRef : ClassTag : Tagged]: Mock2[A, B] = Mock2(mockZio[A], mockZio[B])
+  def createMock[A <: AnyRef : ClassTag : Tagged]: Mock1[A] = zioeasymock.Mock1(getClass[A])
+
+  def createMock[A <: AnyRef : ClassTag : Tagged, B <: AnyRef : ClassTag : Tagged]: Mock2[A, B] = Mock2(getClass[A], getClass[B])
 
   def createMock[A <: AnyRef : ClassTag : Tagged, B <: AnyRef : ClassTag : Tagged, C <: AnyRef : ClassTag : Tagged]: Mock3[A, B, C] =
-    Mock3(mockZio[A], mockZio[B], mockZio[C])
-
-  def createStrictMock[A <: AnyRef : ClassTag : Tagged]: Mock1[A] =
-    zioeasymock.Mock1(mockStrictZio[A])
-
-  def createStrictMock[A <: AnyRef : ClassTag : Tagged, B <: AnyRef : ClassTag : Tagged]: Mock2[A, B] =
-    Mock2(mockStrictZio[A], mockStrictZio[B])
-
-  def createStrictMock[A <: AnyRef : ClassTag : Tagged, B <: AnyRef : ClassTag : Tagged, C <: AnyRef : ClassTag : Tagged]: Mock3[A, B, C] =
-    Mock3(mockStrictZio[A], mockStrictZio[B], mockStrictZio[C])
+    Mock3(getClass[A], getClass[B], getClass[C])
 
   def expecting[A <: AnyRef : ClassTag : Tagged](expectation: A => Task[Any]): ExpectingMock1[A] =
     createMock[A].expecting(expectation)

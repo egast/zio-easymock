@@ -19,27 +19,24 @@ object zioeasymockSpec extends DefaultRunnableSpec {
       )
     },
     testM("test strict mocking") {
-      createStrictMock[TestService.Service]
-        .expecting { service1 =>
-          expect(service1.doSomething(1000))(_.andReturn(ZIO.effectTotal("1000"))) *>
-            expect(service1.doSomething(2000))(_.andReturn(ZIO.effectTotal("2000"))) *>
-            expect(service1.doSomething(3000))(_.andReturn(ZIO.effectTotal("3000")))
-        }.whenExecutingAsLayer(mockLayer =>
+      expecting[TestService.Service] { service1 =>
+        expect(service1.doSomething(1000))(_.andReturn(ZIO.effectTotal("1000"))) *>
+          expect(service1.doSomething(2000))(_.andReturn(ZIO.effectTotal("2000"))) *>
+          expect(service1.doSomething(3000))(_.andReturn(ZIO.effectTotal("3000")))
+      }.whenExecutingAsLayer(mockLayer =>
         assertM(TestService.doSomething(1000) *> TestService.doSomething(2000) *> TestService.doSomething(3000))(equalTo("3000"))
           .provideCustomLayer(mockLayer)
-      )
+      ).provideCustomLayer(EasyMocksControl.strict)
     },
     testM("test strict mocking unexpected call") {
-      createStrictMock[TestService.Service]
-        .expecting { service1 =>
-          expect(service1.doSomething(2000))(_.andReturn(ZIO.effectTotal("2000"))) *>
-            expect(service1.doSomething(1000))(_.andReturn(ZIO.effectTotal("1000"))) *>
-            expect(service1.doSomething(3000))(_.andReturn(ZIO.effectTotal("3000")))
-
-        }.whenExecutingAsLayer(mockLayer =>
+      expecting[TestService.Service] { service1 =>
+        expect(service1.doSomething(2000))(_.andReturn(ZIO.effectTotal("2000"))) *>
+          expect(service1.doSomething(1000))(_.andReturn(ZIO.effectTotal("1000"))) *>
+          expect(service1.doSomething(3000))(_.andReturn(ZIO.effectTotal("3000")))
+      }.whenExecutingAsLayer(mockLayer =>
         assertM(TestService.doSomething(1000) *> TestService.doSomething(2000) *> TestService.doSomething(3000))(equalTo("3000"))
           .provideCustomLayer(mockLayer)
-      )
+      ).provideCustomLayer(EasyMocksControl.strict)
     } @@ failure,
     testM("test mocking with mock returning a failed effect") {
       val failure = new RuntimeException("failure")
@@ -107,7 +104,7 @@ object zioeasymockSpec extends DefaultRunnableSpec {
         }.whenExecutingAsLayer(mockLayer =>
           assertM(TestService2.doSomething2(n * 2) *> TestService.doSomething(n))(equalTo(n.toString))
             .provideCustomLayer(mockLayer)
-        )
+        ).provideCustomLayer(EasyMocksControl.standard)
       }
     },
     testM("test mocking with check should fail") {
@@ -132,10 +129,10 @@ object zioeasymockSpec extends DefaultRunnableSpec {
         }.whenExecutingAsLayer(mock2Layer =>
           assertM(TestService2.doSomething2(200) *> TestService.doSomething(1000) *> TestService.doSomething(2000))(equalTo("2000"))
             .provideCustomLayer(mockLayer ++ mock2Layer)
-        )
+        ).provideCustomLayer(EasyMocksControl.standard)
       )
     },
-    testM("test mocking") {
+    testM("checkM test mocking") {
       checkM(Gen.listOf(Gen.anyInt)) { numbers =>
         expecting[TestService.Service] { service1 =>
           ZIO.foreach(numbers)(n =>
@@ -145,10 +142,10 @@ object zioeasymockSpec extends DefaultRunnableSpec {
             ZIO.foreach(numbers)(n => TestService.doSomething(n))
           )(equalTo(numbers.map(_.toString)))
             .provideCustomLayer(mockLayer)
-        )
+        ).provideCustomLayer(EasyMocksControl.standard)
       }
     }
-  )
+  ).provideCustomLayer(EasyMocksControl.standard).mapError(TestFailure.fail)
 
 }
 
