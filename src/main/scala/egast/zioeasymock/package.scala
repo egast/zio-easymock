@@ -35,7 +35,7 @@ package object zioeasymock {
   (expectation: (A, B, C) => Task[Any]
   ): ExpectingMock3[A, B, C] = createMock[A, B, C].expecting(expectation)
 
-  def expect[A](A: => A): Task[IExpectationSetters[A]] =
-    Task(EasyMock.expect(A))
+  def expect[A, B](A: => A)(expectationSetters: IExpectationSetters[A] => IExpectationSetters[B]): Task[IExpectationSetters[B]] =
+    Task(EasyMock.expect(A)).flatMap(v => Task(expectationSetters(v)))
 
 }
