@@ -6,7 +6,7 @@ EasyMock mocking for ZIO
 Add the following dependency to your `build.sbt` file:
 ```
 libraryDependencies ++= Seq(
-  "com.github.egast" %% "zio-easymock" % "0.1.0"
+  "com.github.egast" %% "zio-easymock" % "0.2.0"
 )
 ```
 
