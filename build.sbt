@@ -23,7 +23,7 @@ inThisBuild(
 ThisBuild / publishTo := sonatypePublishToBundle.value
 
 name := "zio-easymock"
-version := "0.2.0"
+version := "0.3.0-SNAPSHOT"
 
 val zioVersion = "1.0.0-RC18-2"
 val easymockVersion = "4.2"
