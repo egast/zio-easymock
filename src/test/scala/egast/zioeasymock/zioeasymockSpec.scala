@@ -145,7 +145,7 @@ object zioeasymockSpec extends DefaultRunnableSpec {
         ).provideCustomLayer(EasyMocksControl.standard)
       }
     }
-  ).provideCustomLayer(EasyMocksControl.standard).mapError(TestFailure.fail)
+  ).provideCustomLayer(EasyMocksControl.standard)
 
 }
 
