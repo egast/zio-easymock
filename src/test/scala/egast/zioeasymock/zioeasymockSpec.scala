@@ -40,7 +40,7 @@ object zioeasymockSpec extends DefaultRunnableSpec {
         assertM(TestService.doSomething(1000) *> TestService.doSomething(2000) *> TestService.doSomething(3000))(equalTo("3000"))
           .provideCustomLayer(mockLayer)
       )
-    } @@ failure,
+    } @@ failing,
     testM("test mocking with mock returning a failed effect") {
       val failure = new RuntimeException("failure")
       expecting[TestService.Service, TestService2.Service] { (_, service2) =>
@@ -78,7 +78,7 @@ object zioeasymockSpec extends DefaultRunnableSpec {
         assertM(TestService2.doSomething2(200) *> TestService.doSomething(1000))(equalTo("100"))
           .provideCustomLayer(mockLayer)
       )
-    } @@ failure,
+    } @@ failing,
     testM("test mocking create mock failure") {
       expecting[String] { string =>
         expect(string.charAt(100))(_.andReturn('e'))
@@ -86,7 +86,7 @@ object zioeasymockSpec extends DefaultRunnableSpec {
       }.whenExecuting(string =>
         assertM(ZIO.effect(string.charAt(100)))(equalTo('e'))
       )
-    } @@ failure,
+    } @@ failing,
     testM("test mocking verify failure") {
       expecting[TestService.Service, TestService2.Service] { (service1, service2) =>
         expect(service1.doSomething(1000))(_.andReturn(ZIO.effectTotal("100"))) *>
@@ -97,7 +97,7 @@ object zioeasymockSpec extends DefaultRunnableSpec {
         assertM(TestService2.doSomething2(200) *> TestService.doSomething(1000))(equalTo("100"))
           .provideCustomLayer(mockLayer)
       )
-    } @@ failure,
+    } @@ failing,
     testM("test mocking with check") {
       checkM(Gen.int(0, 200)) { n =>
         expecting[TestService.Service, TestService2.Service] { (service1, service2) =>
@@ -121,7 +121,7 @@ object zioeasymockSpec extends DefaultRunnableSpec {
             .provideCustomLayer(mockLayer)
         )
       }
-    } @@ failure,
+    } @@ failing,
     testM("test nested mocking ") {
       expecting[TestService.Service] { service1 =>
         expect(service1.doSomething(1000))(_.andReturn(ZIO.effectTotal("100"))) *>
