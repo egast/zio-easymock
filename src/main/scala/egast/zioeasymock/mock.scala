@@ -31,6 +31,23 @@ case class Mock3[A <: AnyRef: Tag, B <: AnyRef: Tag, C <: AnyRef: Tag](mock1: Ta
   } yield (m1, m2, m3)
 }
 
+case class Mock4[A <: AnyRef: Tag, B <: AnyRef: Tag, C <: AnyRef: Tag, D <: AnyRef: Tag](
+  mock1: Task[A],
+  mock2: Task[B],
+  mock3: Task[C],
+  mock4: Task[D]
+) {
+  def expecting(expectation: (A, B, C, D) => Task[Any]): ExpectingMock4[A, B, C, D] =
+    ExpectingMock4(this, expectation)
+
+  private[zioeasymock] val asTuple: Task[(A, B, C, D)] = for {
+    m1 <- mock1
+    m2 <- mock2
+    m3 <- mock3
+    m4 <- mock4
+  } yield (m1, m2, m3, m4)
+}
+
 object Mock {
 
   def mockZio[A <: AnyRef](implicit cls: ClassTag[A]): Task[A] =

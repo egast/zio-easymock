@@ -16,6 +16,14 @@ package object zioeasymock {
   def createMock[A <: AnyRef: ClassTag: Tag, B <: AnyRef: ClassTag: Tag, C <: AnyRef: ClassTag: Tag]: Mock3[A, B, C] =
     Mock3(mockZio[A], mockZio[B], mockZio[C])
 
+  def createMock[
+    A <: AnyRef: ClassTag: Tag,
+    B <: AnyRef: ClassTag: Tag,
+    C <: AnyRef: ClassTag: Tag,
+    D <: AnyRef: ClassTag: Tag
+  ]: Mock4[A, B, C, D] =
+    Mock4(mockZio[A], mockZio[B], mockZio[C], mockZio[D])
+
   def createStrictMock[A <: AnyRef: ClassTag: Tag]: Mock1[A] =
     zioeasymock.Mock1(mockStrictZio[A])
 
@@ -25,6 +33,14 @@ package object zioeasymock {
   def createStrictMock[A <: AnyRef: ClassTag: Tag, B <: AnyRef: ClassTag: Tag, C <: AnyRef: ClassTag: Tag]
     : Mock3[A, B, C] =
     Mock3(mockStrictZio[A], mockStrictZio[B], mockStrictZio[C])
+
+  def createStrictMock[
+    A <: AnyRef: ClassTag: Tag,
+    B <: AnyRef: ClassTag: Tag,
+    C <: AnyRef: ClassTag: Tag,
+    D <: AnyRef: ClassTag: Tag
+  ]: Mock4[A, B, C, D] =
+    Mock4(mockStrictZio[A], mockStrictZio[B], mockStrictZio[C], mockStrictZio[D])
 
   def expecting[A <: AnyRef: ClassTag: Tag](
     expectation: A => Task[Any]

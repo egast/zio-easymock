@@ -56,6 +56,23 @@ case class ExpectingMock3[A <: AnyRef: Tag, B <: AnyRef: Tag, C <: AnyRef: Tag](
         assertion(ZLayer.succeedMany(Has.allOf[A, B, C](a, b, c)))
     }
 }
+case class ExpectingMock4[A <: AnyRef: Tag, B <: AnyRef: Tag, C <: AnyRef: Tag, D <: AnyRef: Tag](
+  mock: Mock4[A, B, C, D],
+  expectation: (A, B, C, D) => Task[Any]
+) {
+  def whenExecuting[R, E](
+    assertion: (A, B, C, D) => ZIO[R, E, TestResult]
+  ): ZIO[R, E, TestResult] =
+    assertWhenExecuting(expectation.tupled, assertion.tupled)(mock.asTuple)
+
+  def whenExecutingAsLayer[R, E](
+    assertion: ULayer[Has[A] with Has[B]] => ZIO[R, E, TestResult]
+  ): ZIO[R, E, TestResult] =
+    whenExecuting {
+      case (a, b, c, d) =>
+        assertion(ZLayer.succeedMany(Has.allOf[A, B, C, D](a, b, c, d)))
+    }
+}
 
 private[zioeasymock] object ExpectingMock {
 
