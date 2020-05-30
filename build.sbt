@@ -1,8 +1,8 @@
-lazy val scala211 = "2.11.12"
-lazy val scala212 = "2.12.11"
-lazy val scala213 = "2.13.2"
+lazy val scala211  = "2.11.12"
+lazy val scala212  = "2.12.11"
+lazy val scala213  = "2.13.2"
 lazy val mainScala = scala213
-lazy val allScala = Seq(scala211, scala212, mainScala)
+lazy val allScala  = Seq(scala211, scala212, mainScala)
 
 inThisBuild(
   List(
@@ -33,14 +33,14 @@ inThisBuild(
 ThisBuild / publishTo := sonatypePublishToBundle.value
 
 name := "zio-easymock"
-version := "0.2.2-SNAPSHOT"
+version := "0.3.0"
 
-val zioVersion = "1.0.0-RC20"
+val zioVersion      = "1.0.0-RC20"
 val easymockVersion = "4.2"
 
 libraryDependencies ++= Seq(
-  "dev.zio" %% "zio" % zioVersion,
-  "dev.zio" %% "zio-test" % zioVersion,
+  "dev.zio" %% "zio"          % zioVersion,
+  "dev.zio" %% "zio-test"     % zioVersion,
   "dev.zio" %% "zio-test-sbt" % zioVersion % "test"
 )
 libraryDependencies ++= Seq("org.easymock" % "easymock" % easymockVersion)
