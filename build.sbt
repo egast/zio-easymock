@@ -10,12 +10,22 @@ inThisBuild(
     crossScalaVersions := allScala,
     organization := "com.github.egast",
     homepage := Some(url("https://github.com/egast/zio-easymock")),
-    licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+    licenses := List(
+      "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
+    ),
     developers := List(
-      Developer("egast", "Erik Gast", "egast@users.noreply.github.com", url("https://github.com/egast"))
+      Developer(
+        "egast",
+        "Erik Gast",
+        "egast@users.noreply.github.com",
+        url("https://github.com/egast")
+      )
     ),
     scmInfo := Some(
-      ScmInfo(url("https://github.com/egast/zio-easymock/"), "scm:git:git@github.com:egast/zio-easymock.git")
+      ScmInfo(
+        url("https://github.com/egast/zio-easymock/"),
+        "scm:git:git@github.com:egast/zio-easymock.git"
+      )
     )
   )
 )
@@ -25,7 +35,7 @@ ThisBuild / publishTo := sonatypePublishToBundle.value
 name := "zio-easymock"
 version := "0.2.2-SNAPSHOT"
 
-val zioVersion = "1.0.0-RC19"
+val zioVersion = "1.0.0-RC20"
 val easymockVersion = "4.2"
 
 libraryDependencies ++= Seq(
@@ -33,8 +43,6 @@ libraryDependencies ++= Seq(
   "dev.zio" %% "zio-test" % zioVersion,
   "dev.zio" %% "zio-test-sbt" % zioVersion % "test"
 )
-libraryDependencies ++= Seq(
-  "org.easymock" % "easymock" % easymockVersion
-)
+libraryDependencies ++= Seq("org.easymock" % "easymock" % easymockVersion)
 
 testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
