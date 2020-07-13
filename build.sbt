@@ -33,9 +33,9 @@ inThisBuild(
 ThisBuild / publishTo := sonatypePublishToBundle.value
 
 name := "zio-easymock"
-version := "0.3.1-SNAPSHOT"
+version := "0.4.0"
 
-val zioVersion      = "1.0.0-RC20"
+val zioVersion      = "1.0.0-RC21-2"
 val easymockVersion = "4.2"
 
 libraryDependencies ++= Seq(
